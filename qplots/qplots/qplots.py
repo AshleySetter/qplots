@@ -6,7 +6,7 @@ import seaborn as _sns
 _mpl.rcParams['lines.markeredgewidth'] = 1 # set default markeredgewidth to 1 overriding seaborn's default value of 0
 _sns.set_style("whitegrid")
 
-def joint_plot(x, y, marginalBins=200, gridsize=50, plotlimits=None, logscale=True, cmap="inferno_r", marginalCol=None, figsize=(8, 8), ShowFig=True):
+def joint_plot(x, y, marginalBins=50, gridsize=50, plotlimits=None, logscale=False, cmap="inferno_r", marginalCol=None, figsize=(6, 6), ShowFig=True):
     """
 
     """
@@ -44,8 +44,10 @@ def joint_plot(x, y, marginalBins=200, gridsize=50, plotlimits=None, logscale=Tr
     if marginalCol == None:
         if logscale == True:
             marginalCol = cmapOb(0.7)
+            cbarlabel = 'log10(N)'
         else:
             marginalCol = cmapOb(0.5)
+            cbarlabel = 'N'
 
     # set up limits
 
@@ -66,7 +68,7 @@ def joint_plot(x, y, marginalBins=200, gridsize=50, plotlimits=None, logscale=Tr
     cbaxes = fig.add_axes(cbar_pos)  # This is the position for the colorbar
     #cb = _plt.colorbar(axp, cax = cbaxes)
     cb = fig.colorbar(hb, cax = cbaxes)
-    cb.set_label('log10(N)')
+    cb.set_label(cbarlabel)
 
     axScatter.set_xlim((-plotlimits, plotlimits))
     axScatter.set_ylim((-plotlimits, plotlimits))
