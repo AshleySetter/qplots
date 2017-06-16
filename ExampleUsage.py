@@ -1,7 +1,7 @@
 import numpy as np
 import qplots
 
-#import seaborn # this breaks my fontsize argument =/
+import seaborn # this breaks my fontsize argument =/
 #seaborn.set_style("whitegrid") 
 
 # the random data
