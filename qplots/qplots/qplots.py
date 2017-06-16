@@ -162,7 +162,7 @@ def dynamic_zoom_plot(x, y, N, RegionStartSize=1000):
     fig = ax1.get_figure()
     _plt.subplots_adjust(bottom=0.25) # makes space at bottom for sliders
     
-    CenterTime0 = len(x)/RegionStartSize
+    CenterTime0 = len(x)/2
     TimeWidth0 = len(x)/RegionStartSize
     
     l1, = ax1.plot(x_lowres, y_lowres, lw=2, color='red')
