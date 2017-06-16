@@ -12,9 +12,7 @@ def joint_plot(x, y, marginalBins=50, gridsize=50, plotlimits=None, logscale=Fal
     """
 
     """
-    with _plt.rc_context({'font.size': fontsize,
-    }
-    ):
+    with _plt.rc_context({'font.size': fontsize,}):
         # definitions for the axes
         scatter_marginal_seperation = 0.01
         left, width = 0.2, 0.65-0.1 # left = left side of scatter and hist_x
