@@ -125,6 +125,7 @@ def joint_plot(x, y, marginalBins=50, gridsize=50, plotlimits=None, logscale_cma
         cbaraxes = fig.add_axes(cbar_pos)  # This is the position for the colorbar
         #cbar = _plt.colorbar(axp, cax = cbaraxes)
         cbar = fig.colorbar(hb, cax = cbaraxes, alpha=0.75) #, orientation="horizontal"
+        cbar.solids.set_edgecolor("face")
         cbar.ax.set_yticklabels(cbar.ax.yaxis.get_ticklabels(), y=0, rotation=45)
         cbar.set_label(cbarlabel, labelpad=-25, y=1.05, rotation=0)
     
