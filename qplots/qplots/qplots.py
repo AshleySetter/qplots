@@ -6,7 +6,7 @@ from matplotlib.pyplot import show
 from matplotlib.widgets import Slider, Button, RadioButtons
 
 #_mpl.rcParams['lines.markeredgewidth'] = 1 # set default markeredgewidth to 1 overriding seaborn's default value of 0
-_plt.style.use('seaborn-ticks')
+_plt.style.use('seaborn-whitegrid')
 
 def joint_plot(x, y, marginalBins=50, gridsize=50, plotlimits=None, logscale_cmap=False, logscale_marginals=False, cmap="inferno_r", marginalCol=None, figsize=(8, 8), fontsize=8, *args, **kwargs):
     """
@@ -119,14 +119,14 @@ def joint_plot(x, y, marginalBins=50, gridsize=50, plotlimits=None, logscale_cma
                 plotlimits = ymax * 1.1
 
         # the hexbin plot:
-        hb = axHexBin.hexbin(x, y, gridsize=gridsize, bins=hexbinscale, cmap=cmapOb, alpha=0.8,  *args, **kwargs)
+        hb = axHexBin.hexbin(x, y, gridsize=gridsize, bins=hexbinscale, cmap=cmapOb, alpha=0.75, extent=(-plotlimits, plotlimits, -plotlimits, plotlimits), *args, **kwargs)
         axHexBin.axis([-plotlimits, plotlimits, -plotlimits, plotlimits])
 
         cbaraxes = fig.add_axes(cbar_pos)  # This is the position for the colorbar
         #cbar = _plt.colorbar(axp, cax = cbaraxes)
-        cbar = fig.colorbar(hb, cax = cbaraxes) #, orientation="horizontal"
+        cbar = fig.colorbar(hb, cax = cbaraxes, alpha=0.75) #, orientation="horizontal"
         cbar.ax.set_yticklabels(cbar.ax.yaxis.get_ticklabels(), y=0, rotation=45)
-        cbar.set_label(cbarlabel, labelpad=-25, y=1.05, rotation=0)        
+        cbar.set_label(cbarlabel, labelpad=-25, y=1.05, rotation=0)
     
         axHexBin.set_xlim((-plotlimits, plotlimits))
         axHexBin.set_ylim((-plotlimits, plotlimits))
@@ -137,9 +137,9 @@ def joint_plot(x, y, marginalBins=50, gridsize=50, plotlimits=None, logscale_cma
         lim = plotlimits #(int(xymax/binwidth) + 1) * binwidth
 
         bins = _np.arange(-lim, lim + binwidth, binwidth)
-        axHistx.hist(x, bins=bins, color=marginalCol, alpha=0.7)
+        axHistx.hist(x, bins=bins, color=marginalCol, alpha=0.7, linewidth=0)
         axHistx.set_yscale(value=scale)
-        axHisty.hist(y, bins=bins, orientation='horizontal', color=marginalCol, alpha=0.7)
+        axHisty.hist(y, bins=bins, orientation='horizontal', color=marginalCol, alpha=0.7, linewidth=0)
         axHisty.set_xscale(value=scale)
 
         _plt.setp(axHistx.get_xticklabels(), visible=False) # sets x ticks to be invisible while keeping gridlines
