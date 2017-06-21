@@ -24,7 +24,7 @@ def joint_plot(x, y, marginalBins=50, gridsize=50, plotlimits=None, logscale=Fal
     rect_histy = [left_h, bottom, 0.2, height]
 
     # start with a rectangular Figure
-    fig = _plt.figure(1, figsize=figsize)
+    fig = _plt.figure(figsize=figsize)
 
     axScatter = _plt.axes(rect_scatter)
     axHistx = _plt.axes(rect_histx)
