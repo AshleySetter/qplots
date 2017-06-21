@@ -8,7 +8,7 @@ import seaborn # this breaks my fontsize argument =/
 x = np.random.randn(100000)
 y = np.random.randn(100000)
 
-fig, axscatter, axhistx, axhisty, cm = qplots.joint_plot(x, y, fontsize=8, logscale_cmap=True)
+fig, axscatter, axhistx, axhisty, cm = qplots.joint_plot(x, y, fontsize=8)
 axscatter.set_xlabel("variable 1")
 axscatter.set_ylabel("variable 2")
 qplots.show()
