@@ -8,43 +8,99 @@ from matplotlib.widgets import Slider, Button, RadioButtons
 #_mpl.rcParams['lines.markeredgewidth'] = 1 # set default markeredgewidth to 1 overriding seaborn's default value of 0
 _plt.style.use('seaborn-ticks')
 
-def joint_plot(x, y, marginalBins=50, gridsize=50, plotlimits=None, logscale=False, cmap="inferno_r", marginalCol=None, figsize=(6, 6), fontsize=8, *args, **kwargs):
+def joint_plot(x, y, marginalBins=50, gridsize=50, plotlimits=None, logscale_cmap=False, logscale_marginals=False, cmap="inferno_r", marginalCol=None, figsize=(8, 8), fontsize=8, *args, **kwargs):
     """
+    Plots some x and y data using hexbins along with a colorbar
+    and marginal distributions (X and Y histograms).
 
+    Parameters
+    ----------
+    x : ndarray
+        The x data
+    y : ndarray
+        The y data
+    marginalBins : int, optional
+        The number of bins to use in calculating the marginal
+        histograms of x and y
+    gridsize : int, optional
+        The grid size to be passed to matplotlib.pyplot.hexbins
+        which sets the gridsize in calculating the hexbins
+    plotlimits : float, optional
+        The limit of the plot in x and y (it produces a square 
+        area centred on zero. Defaults to max range of data.
+    logscale_cmap : bool, optional
+        Sets whether to use a logscale for the colormap.
+        Defaults to False.
+    logscale_marginals : bool, optional
+        Sets whether to use a logscale for the marignals.
+        Defaults to False.
+    cmap : string, optional
+        Specifies the colormap to use, see
+        https://matplotlib.org/users/colormaps.html
+        for options. Defaults to 'inferno_r'
+    marginalCol : string, optional
+        Specifies color to use for marginals,
+        defaults to middle color of colormap 
+        for a linear colormap and 70% for a 
+        logarithmic colormap.
+    figsize : tuple of 2 values, optional
+        Sets the figsize, defaults to (8, 8)
+    fontsize : int, optional
+        Sets the fontsize for all text and axis ticks.
+        Defaults to 8.
+    *args, **kwargs : optional
+        args and kwargs passed to matplotlib.pyplot.hexbins
+    
+    Returns
+    -------
+    fig : matplotlib.figure.Figure object
+        The figure object created to house the joint_plot
+    axHexBin : matplotlib.axes.Axes object
+        The axis for the hexbin plot
+    axHistx : matplotlib.axes.Axes object
+        The axis for the x marginal plot
+    axHisty : matplotlib.axes.Axes object
+        The axis for the y marginal plot
+    cbar : matplotlib.colorbar.Colorbar
+        The color bar object
     """
     with _plt.rc_context({'font.size': fontsize,}):
         # definitions for the axes
-        scatter_marginal_seperation = 0.01
-        left, width = 0.2, 0.65-0.1 # left = left side of scatter and hist_x
-        bottom, height = 0.1, 0.65-0.1 # bottom = bottom of scatter and hist_y
-        bottom_h = height + bottom + scatter_marginal_seperation
-        left_h = width + left + scatter_marginal_seperation
+        hexbin_marginal_seperation = 0.01
+        left, width = 0.2, 0.65-0.1 # left = left side of hexbin and hist_x
+        bottom, height = 0.1, 0.65-0.1 # bottom = bottom of hexbin and hist_y
+        bottom_h = height + bottom + hexbin_marginal_seperation
+        left_h = width + left + hexbin_marginal_seperation
         cbar_pos = [0.03, bottom, 0.05, 0.02+width]
 
-        rect_scatter = [left, bottom, width, height]
+        rect_hexbin = [left, bottom, width, height]
         rect_histx = [left, bottom_h, width, 0.2]
         rect_histy = [left_h, bottom, 0.2, height]
 
         # start with a rectangular Figure
         fig = _plt.figure(figsize=figsize)
 
-        axScatter = _plt.axes(rect_scatter)
+        axHexBin = _plt.axes(rect_hexbin)
         axHistx = _plt.axes(rect_histx)
         axHisty = _plt.axes(rect_histy)
-
+        axHisty.set_xticklabels(axHisty.xaxis.get_ticklabels(), y=0, rotation=-90)
+        
         # scale specific settings
-        if logscale == True:
-            scale='log'
+        if logscale_cmap == True:
             hexbinscale = 'log'
         else:
-            scale='linear'
             hexbinscale = None
+        if logscale_marginals == True:
+            scale='log'
+        else:
+            scale='linear'
+            
 
         # set up colors 
         cmapOb = _mpl.cm.get_cmap(cmap)
         cmapOb.set_under(color='white')
         if marginalCol == None:
-            if logscale == True:
+            if logscale_cmap == True:
                 marginalCol = cmapOb(0.7)
                 cbarlabel = 'log10(N)'
             else:
@@ -62,17 +118,18 @@ def joint_plot(x, y, marginalBins=50, gridsize=50, plotlimits=None, logscale=Fal
             else:
                 plotlimits = ymax * 1.1
 
-        # the scatter plot:
-        hb = axScatter.hexbin(x, y, gridsize=gridsize, bins=hexbinscale, cmap=cmapOb, alpha=0.8,  *args, **kwargs)
-        axScatter.axis([-plotlimits, plotlimits, -plotlimits, plotlimits])
+        # the hexbin plot:
+        hb = axHexBin.hexbin(x, y, gridsize=gridsize, bins=hexbinscale, cmap=cmapOb, alpha=0.8,  *args, **kwargs)
+        axHexBin.axis([-plotlimits, plotlimits, -plotlimits, plotlimits])
 
-        cbaxes = fig.add_axes(cbar_pos)  # This is the position for the colorbar
-        #cb = _plt.colorbar(axp, cax = cbaxes)
-        cb = fig.colorbar(hb, cax = cbaxes) #, orientation="horizontal"
-        cb.set_label(cbarlabel, labelpad=-25, y=1.05, rotation=0)        
+        cbaraxes = fig.add_axes(cbar_pos)  # This is the position for the colorbar
+        #cbar = _plt.colorbar(axp, cax = cbaraxes)
+        cbar = fig.colorbar(hb, cax = cbaraxes) #, orientation="horizontal"
+        cbar.ax.set_yticklabels(cbar.ax.yaxis.get_ticklabels(), y=0, rotation=45)
+        cbar.set_label(cbarlabel, labelpad=-25, y=1.05, rotation=0)        
     
-        axScatter.set_xlim((-plotlimits, plotlimits))
-        axScatter.set_ylim((-plotlimits, plotlimits))
+        axHexBin.set_xlim((-plotlimits, plotlimits))
+        axHexBin.set_ylim((-plotlimits, plotlimits))
         
         # now determine bin size
         binwidth = (2*plotlimits)/marginalBins
@@ -88,10 +145,10 @@ def joint_plot(x, y, marginalBins=50, gridsize=50, plotlimits=None, logscale=Fal
         _plt.setp(axHistx.get_xticklabels(), visible=False) # sets x ticks to be invisible while keeping gridlines
         _plt.setp(axHisty.get_yticklabels(), visible=False) # sets x ticks to be invisible while keeping gridlines
 
-        axHistx.set_xlim(axScatter.get_xlim())
-        axHisty.set_ylim(axScatter.get_ylim())
+        axHistx.set_xlim(axHexBin.get_xlim())
+        axHisty.set_ylim(axHexBin.get_ylim())
         
-    return fig, axScatter, axHistx, axHisty, cb
+    return fig, axHexBin, axHistx, axHisty, cbar
 
 def take_closest(myList, myNumber):
     """
